@@ -1,8 +1,8 @@
 import sqlite3
 
-from db import Database
-from logger import logger
-from utils import create_fingerprint, normalize_text
+from app.database import Database
+from app.utils.logger import logger
+from app.utils.text import create_fingerprint, normalize_text
 
 
 def test_database_service() -> None:

@@ -1,4 +1,4 @@
-from db import Database
+from app.database import Database
 
 
 def main() -> None:

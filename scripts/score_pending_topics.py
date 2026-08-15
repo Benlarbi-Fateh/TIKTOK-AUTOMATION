@@ -4,9 +4,9 @@ import argparse
 import time
 from typing import Any
 
-from db import Database
-from logger import logger
-from topic_scorer import score_topic
+from app.database import Database
+from app.utils.logger import logger
+from app.scoring.topic_scorer import score_topic
 
 
 def get_pending_topics(

@@ -1,4 +1,4 @@
-from logger import logger
+from app.utils.logger import logger
 from source_manager import SourceManager
 
 
