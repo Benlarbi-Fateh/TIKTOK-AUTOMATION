@@ -43,6 +43,11 @@ jobs:
           pip install -r requirements.txt
           # extras may include platform-specific packages; don't fail the job if unavailable
           pip install -r requirements-extra.txt || true
+      - name: Debug secrets presence
+        run: |
+          echo "Run on branch: $GITHUB_REF"
+          if [ -z "${{ secrets.PUBLISH_SANDBOX_API_KEY }}" ]; then echo "PUBLISH_SANDBOX_API_KEY: MISSING"; else echo "PUBLISH_SANDBOX_API_KEY: PRESENT"; fi
+          if [ -z "${{ secrets.PUBLISH_SANDBOX_API_BASE }}" ]; then echo "PUBLISH_SANDBOX_API_BASE: MISSING"; else echo "PUBLISH_SANDBOX_API_BASE: PRESENT"; fi
       - name: Run gated integration tests
         env:
           RUN_PUBLISH_TESTS: '1'
