@@ -46,6 +46,8 @@ jobs:
         env:
           RUN_PUBLISH_TESTS: '1'
           PUBLISH_SANDBOX_API_KEY: ${{ secrets.PUBLISH_SANDBOX_API_KEY }}
+          PUBLISH_SANDBOX_API_BASE: ${{ secrets.PUBLISH_SANDBOX_API_BASE }}
+          ALLOW_REMOTE_CLEANUP: ${{ secrets.ALLOW_REMOTE_CLEANUP }}
         run: |
           pytest -q tests/integration -k publish | tee pytest-integration.log
       - name: Upload pytest integration logs
