@@ -47,15 +47,19 @@ class PublishClient:
         url = f"{self.api_base}/upload/video"
         headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
 
-        files = {"file": (file_path.name, file_path.open("rb"))} if file_path.exists() else None
-
-        resp = self.session.post(url, headers=headers, data={"meta": metadata}, files=files, timeout=self.timeout)
+        # Ensure file is opened and closed promptly to avoid locking the temp file
+        if file_path.exists():
+            with file_path.open("rb") as fp:
+                files = {"file": (file_path.name, fp)}
+                resp = self.session.post(url, headers=headers, data={"meta": metadata}, files=files, timeout=self.timeout)
+        else:
+            resp = self.session.post(url, headers=headers, data={"meta": metadata}, files=None, timeout=self.timeout)
 
         if resp.status_code >= 500:
             raise PublishTransientError("Server error during upload")
 
         if resp.status_code >= 400:
-            raise PublishError(f"Upload failed: {resp.status_code} {resp.text}")
+            raise PublishError(f"Upload failed ({url}): {resp.status_code} {resp.text}")
 
         data = resp.json() if resp.content else {"upload_id": "upload-placeholder"}
         return data.get("upload_id") or data.get("upload_token") or "upload-placeholder"
@@ -74,7 +78,7 @@ class PublishClient:
             raise PublishTransientError("Server error during publish")
 
         if resp.status_code >= 400:
-            raise PublishError(f"Publish failed: {resp.status_code} {resp.text}")
+            raise PublishError(f"Publish failed ({url}): {resp.status_code} {resp.text}")
 
         data = resp.json() if resp.content else {"post_id": "post-placeholder", "status": "published"}
         return PublishResult(post_id=data.get("post_id"), status=data.get("status", "unknown"))
@@ -88,7 +92,7 @@ class PublishClient:
             raise PublishTransientError("Server error during status check")
 
         if resp.status_code >= 400:
-            raise PublishError(f"Status check failed: {resp.status_code} {resp.text}")
+            raise PublishError(f"Status check failed ({url}): {resp.status_code} {resp.text}")
 
         data = resp.json() if resp.content else {"status": "unknown"}
         return data.get("status", "unknown")
@@ -112,6 +116,6 @@ class PublishClient:
             return True
 
         if resp.status_code >= 400:
-            raise PublishError(f"Delete failed: {resp.status_code} {resp.text}")
+            raise PublishError(f"Delete failed ({url}): {resp.status_code} {resp.text}")
 
         return True

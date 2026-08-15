@@ -1,12 +1,14 @@
 import os
 import tempfile
 import time
+import threading
 import uuid
 from pathlib import Path
 
 import pytest
 
 from app.publish.client import PublishClient
+from tests.integration import mock_publish_server
 
 
 def _make_dummy_video(path: Path) -> None:
@@ -28,10 +30,21 @@ def test_publish_integration_gate():
     if not api_key:
         pytest.skip("No sandbox API key available in environment")
 
-    # Require an explicit sandbox base URL to avoid hitting production APIs by mistake
-    api_base = os.getenv("PUBLISH_SANDBOX_API_BASE", "")
-    if not api_base:
-        pytest.skip("Skipping gated publish integration tests (PUBLISH_SANDBOX_API_BASE not set)")
+    # Optionally start a local mock publish server for deterministic testing
+    use_mock = os.getenv("USE_MOCK_PUBLISH", "0") == "1"
+    if use_mock:
+        port = int(os.getenv("MOCK_PUBLISH_PORT", "8001"))
+        t = threading.Thread(target=mock_publish_server.run, args=(port,), daemon=True)
+        t.start()
+        time.sleep(0.5)
+        # When using the local mock, always target the mock server regardless
+        # of any existing PUBLISH_SANDBOX_API_BASE value (avoid schemeless secrets)
+        api_base = f"http://127.0.0.1:{port}"
+    else:
+        # Require an explicit sandbox base URL to avoid hitting production APIs by mistake
+        api_base = os.getenv("PUBLISH_SANDBOX_API_BASE", "")
+        if not api_base:
+            pytest.skip("Skipping gated publish integration tests (PUBLISH_SANDBOX_API_BASE not set)")
 
     client = PublishClient(api_key=api_key, api_base=api_base)
 

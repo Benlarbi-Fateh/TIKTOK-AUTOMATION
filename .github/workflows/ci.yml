@@ -48,6 +48,12 @@ jobs:
           echo "Run on branch: $GITHUB_REF"
           if [ -z "${{ secrets.PUBLISH_SANDBOX_API_KEY }}" ]; then echo "PUBLISH_SANDBOX_API_KEY: MISSING"; else echo "PUBLISH_SANDBOX_API_KEY: PRESENT"; fi
           if [ -z "${{ secrets.PUBLISH_SANDBOX_API_BASE }}" ]; then echo "PUBLISH_SANDBOX_API_BASE: MISSING"; else echo "PUBLISH_SANDBOX_API_BASE: PRESENT"; fi
+      - name: Start mock publish server (optional)
+        if: ${{ secrets.PUBLISH_USE_MOCK == '1' }}
+        run: |
+          nohup python -u tests/integration/mock_publish_server.py 8001 > mock_publish.log 2>&1 &
+          echo "PUBLISH_SANDBOX_API_BASE=http://127.0.0.1:8001" >> $GITHUB_ENV
+          sleep 1
       - name: Run gated integration tests
         env:
           RUN_PUBLISH_TESTS: '1'
