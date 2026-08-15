@@ -1,5 +1,5 @@
-from logger import logger
-from ollama_client import OllamaClient
+from app.utils.logger import logger
+from app.services.ollama import OllamaClient
 
 
 def test_text_generation() -> None:

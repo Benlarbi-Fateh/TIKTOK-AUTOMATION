@@ -1,6 +1,6 @@
 from config import OLLAMA_MODEL
-from db import Database
-from logger import logger
+from app.database import Database
+from app.utils.logger import logger
 
 
 def test_core() -> None:

@@ -1,5 +1,5 @@
-from logger import logger
-from rss_reader import RSSReader
+from app.utils.logger import logger
+from app.services.rss import RSSReader
 
 
 TEST_FEED_URL = "https://openai.com/news/rss.xml"

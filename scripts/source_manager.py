@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Any
 
-from db import Database
+from app.database import Database
 
 
 class SourceManager:

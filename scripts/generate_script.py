@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from logger import logger
+from app.utils.logger import logger
 from script_generator import generate_script
 
 

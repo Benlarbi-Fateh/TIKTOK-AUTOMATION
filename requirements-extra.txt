@@ -1,0 +1,6 @@
+# Optional / extras for media and rendering
+edge-tts>=2.2.0
+Pillow>=10.0.0
+ffmpeg-python>=0.3.0
+# Optional: tools for local LLM adapters or tokenizers
+# tiktoken>=0.4.0

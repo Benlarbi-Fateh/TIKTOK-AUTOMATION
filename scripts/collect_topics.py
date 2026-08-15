@@ -3,10 +3,10 @@ from __future__ import annotations
 import sqlite3
 from typing import Any
 
-from db import Database
-from logger import logger
-from rss_reader import FeedArticle, RSSReader
-from utils import create_fingerprint, normalize_text
+from app.database import Database
+from app.utils.logger import logger
+from app.services.rss import FeedArticle, RSSReader
+from app.utils.text import create_fingerprint, normalize_text
 
 
 DEFAULT_SOURCES = [
