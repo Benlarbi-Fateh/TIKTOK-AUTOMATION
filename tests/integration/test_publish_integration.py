@@ -28,7 +28,10 @@ def test_publish_integration_gate():
     if not api_key:
         pytest.skip("No sandbox API key available in environment")
 
-    api_base = os.getenv("PUBLISH_SANDBOX_API_BASE", "https://api.tiktok.com")
+    # Require an explicit sandbox base URL to avoid hitting production APIs by mistake
+    api_base = os.getenv("PUBLISH_SANDBOX_API_BASE", "")
+    if not api_base:
+        pytest.skip("Skipping gated publish integration tests (PUBLISH_SANDBOX_API_BASE not set)")
 
     client = PublishClient(api_key=api_key, api_base=api_base)
 
